@@ -4,8 +4,9 @@ import { Slider, Panel } from '../../components/index.native';
 
 const styles = {
   box: {
-    padding: 10,
+    padding: 15,
     paddingBottom: 0,
+    height: 30,
   },
   title: {
     color: 'gray',
