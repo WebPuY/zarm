@@ -39,26 +39,16 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
       offset: 0,
       isVisible: false,
     };
-    this.panResponder = PanResponder.create({
-      onPanResponderStart: this.handlePanResponderStart,
-      onPanResponderMove: this.handlePanResponderMove,
-      onPanResponderRelease: this.onPanResponderEnd,
-    });
   }
 
-  /**
-   * 停止拖动后完成回调
-   */
-  // finishSlider = () => {
-  //   const { onChange } = this.props;
-  //   const { value } = this.state;
-  //   this.setState({
-  //     isVisible: false,
-  //   });
-  //   if (typeof onChange === 'function') {
-  //     onChange(value);
-  //   }
-  // }
+  componentWillMount () {
+    this.panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: this.handlePanResponderStart,
+      onPanResponderMove: this.handlePanResponderMove,
+      onPanResponderEnd: this.onPanResponderEnd,
+    });
+  }
 
   onChangeValue = (value) => {
     this.setState({
@@ -138,7 +128,6 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
   }
 
   handlePanResponderStart = () => {
-    console.log(11111);
     const { disabled } = this.props;
     if (disabled) {
       return;
@@ -154,31 +143,31 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
 
     event.preventDefault();
 
-    let offset = this.offsetStart + gestureState.moveX;
-    if (offset < 0) {
-      offset = 0;
-      const newValue = this.getValueByOffset(offset);
-      this.setState({
-        offset,
-        value: newValue,
-      });
-      return false;
-    }
+    // let offset = this.offsetStart + gestureState.moveX;
+    // if (offset < 0) {
+    //   offset = 0;
+    //   const newValue = this.getValueByOffset(offset);
+    //   this.setState({
+    //     offset,
+    //     value: newValue,
+    //   });
+    //   return false;
+    // }
 
-    if (offset > this.slider) {
-      offset = this.slider;
-      const newValue = this.getValueByOffset(offset);
-      this.setState({
-        offset,
-        value: newValue,
-      });
-      return false;
-    }
+    // if (offset > this.slider) {
+    //   offset = this.slider;
+    //   const newValue = this.getValueByOffset(offset);
+    //   this.setState({
+    //     offset,
+    //     value: newValue,
+    //   });
+    //   return false;
+    // }
 
-    const value = this.getValueByOffset(offset);
-    offset = this.getOffsetByValue(value);
-    this.setState({ offset, value });
-    return true;
+    // const value = this.getValueByOffset(offset);
+    // offset = this.getOffsetByValue(value);
+    // this.setState({ offset, value });
+    // return true;
   }
 
   onPanResponderEnd = () => {
@@ -228,11 +217,11 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
         {this.locatedTooltip()}
         <View style={sliderContent}>
           <View style={sliderLine}></View>
-          <Animated.View
+          <View
             disabled={disabled}
             style={[SliderHandle, viewStyle]}
             {...this.panResponder.panHandlers}
-          ></Animated.View>
+          ></View>
         </View>
       </View>
     );
