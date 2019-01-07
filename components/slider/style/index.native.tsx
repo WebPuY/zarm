@@ -8,8 +8,8 @@ export default {
     flexDirection: 'column',
     alignItems: 'center',
     position: 'absolute',
-    marginLeft: - (variables.slider_tooltip_width / 2 - 18),
-    top: -40,
+    marginLeft: - (variables.slider_tooltip_width / 2 - 27),
+    top: -55,
   },
   tooltipContent: {
     justifyContent: 'center',
@@ -46,6 +46,11 @@ export default {
     width: '100%',
     height: 2,
     backgroundColor: '#d6d6d6',
+  },
+  zaSliderInnerLine: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#12c287',
   },
   zaSliderHandle: {
     width: 28,

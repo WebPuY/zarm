@@ -4,7 +4,6 @@ import {
   Text,
   View,
   PanResponder,
-  Animated,
   ViewStyle,
 } from 'react-native';
 import PropsType from './PropsType';
@@ -20,10 +19,9 @@ const sliderStyles = StyleSheet.create<any>(sliderStyle);
 export default class ZSlider extends PureComponent<SliderProps, any> {
   static defaultProps = {
     value: 0,
-    defaultValue: 0,
     min: 0,
     max: 100,
-    step: 0,
+    step: 1,
     disabled: false,
     styles: sliderStyles,
   };
@@ -35,8 +33,8 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
   constructor(props) {
     super(props);
     this.state = {
-      value: this.props.defaultValue || 0,
-      offset: 0,
+      value: this.props.defaultValue || 0, // tooltip显示的值
+      offset: 0, // 按钮的位移量
       isVisible: false,
     };
   }
@@ -48,6 +46,14 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
       onPanResponderMove: this.handlePanResponderMove,
       onPanResponderEnd: this.onPanResponderEnd,
     });
+  }
+
+  init = () => {
+    const { value } = this.state;
+    if (value !== 0) {
+      const offset = this.getOffsetByValue(value);
+      this.setState({ offset });
+    }
   }
 
   onChangeValue = (value) => {
@@ -103,9 +109,8 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
    */
   getOffsetByValue = (value) => {
     const { min, max } = this.props;
-
-    // 减去按钮的宽度(约值)
-    return (this.slider - 32) * ((value - min) / (max - min));
+    const result = this.slider * ((value - min) / (max - min));
+    return result;
   }
 
   /**
@@ -121,10 +126,11 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
   }
 
   /**
-   * 获取原生slider组件的宽度
+   * 获取组件line的宽度
    */
   getLayout = (e) => {
     this.slider = e.layout.width;
+    this.init()
   }
 
   handlePanResponderStart = () => {
@@ -140,34 +146,32 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
     if (disabled) {
       return false;
     }
-
     event.preventDefault();
 
-    // let offset = this.offsetStart + gestureState.moveX;
-    // if (offset < 0) {
-    //   offset = 0;
-    //   const newValue = this.getValueByOffset(offset);
-    //   this.setState({
-    //     offset,
-    //     value: newValue,
-    //   });
-    //   return false;
-    // }
+    let offset = this.offsetStart + gestureState.moveX;
+    if (offset < 0) {
+      offset = 0;
+      const newValue = this.getValueByOffset(offset);
+      this.setState({
+        offset,
+        value: newValue,
+      });
+      return;
+    }
 
-    // if (offset > this.slider) {
-    //   offset = this.slider;
-    //   const newValue = this.getValueByOffset(offset);
-    //   this.setState({
-    //     offset,
-    //     value: newValue,
-    //   });
-    //   return false;
-    // }
+    if (offset > this.slider) {
+      offset = this.slider;
+      const newValue = this.getValueByOffset(offset);
+      this.setState({
+        offset,
+        value: newValue,
+      });
+      return;
+    }
 
-    // const value = this.getValueByOffset(offset);
-    // offset = this.getOffsetByValue(value);
-    // this.setState({ offset, value });
-    // return true;
+    const value = this.getValueByOffset(offset);
+    offset = this.getOffsetByValue(value);
+    this.setState({ offset, value });
   }
 
   onPanResponderEnd = () => {
@@ -189,6 +193,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
       disabled,
       styles,
     } = this.props;
+    const { offset } = this.state
 
     const sliderWrapper = [
       styles!.container,
@@ -201,27 +206,27 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
     const sliderLine = [
       styles!.zaSliderLine,
     ] as ViewStyle;
+ 
+    const sliderInnerLine = [
+      styles!.zaSliderInnerLine,
+    ] as ViewStyle;
 
-    const SliderHandle = [
+    const sliderHandle = [
       styles!.zaSliderHandle,
     ] as ViewStyle;
 
-    const viewStyle = {
-      transform: [{
-        translateX: this.state.offset,
-      }],
-    };
-
     return (
-      <View style={sliderWrapper} onLayout={({ nativeEvent: e }) => this.getLayout(e)}>
+      <View style={sliderWrapper}>
         {this.locatedTooltip()}
         <View style={sliderContent}>
-          <View style={sliderLine}></View>
+          <View style={[sliderLine, {opacity: disabled ? 0.6 : 1}]} onLayout={({ nativeEvent: e }) => this.getLayout(e)}>
+            <View style={[sliderInnerLine, {width: offset}]} />
+          </View>
           <View
             disabled={disabled}
-            style={[SliderHandle, viewStyle]}
+            style={[sliderHandle, { left: offset }]}
             {...this.panResponder.panHandlers}
-          ></View>
+          />
         </View>
       </View>
     );
