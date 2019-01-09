@@ -58,7 +58,7 @@ export default {
     backgroundColor: '#fff',
     borderRadius: 14,
     shadowColor: '#000',
-    shadowOffset: {h: 1, w: 3},
+    shadowOffset: { h: 1, w: 3 },
     shadowRadius: 5,
     shadowOpacity: 0.4,
     left: 0,
