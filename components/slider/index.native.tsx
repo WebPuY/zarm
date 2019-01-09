@@ -28,12 +28,11 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
 
   private slider;
   private panResponder;
-  private offsetStart: number = 0; // 非首次移动的时候的起始距离
-  private leftSpace: number = 0; // 首次移动的时候需要减掉的距离
+  private offsetStart: number = 0; // 移动的时候的起始距离
 
   constructor(props) {
     super(props);
-    
+
     this.state = {
       value: this.props.defaultValue || 0, // tooltip显示的值
       offset: 0, // 按钮的位移量
@@ -132,8 +131,6 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
   }
 
   handlePanResponderStart = (e, gestureState) => {
-    this.leftSpace = gestureState.x0 // 按住滑块的时候,记录偏移量
-    console.log(gestureState.x0, 'gestureState.x0');
     const { disabled } = this.props;
     if (disabled) {
       return;
@@ -172,7 +169,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
     offset = this.getOffsetByValue(value);
     this.setState({
       offset: offset,
-      value
+      value,
     });
   }
 
@@ -195,6 +192,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
     const {
       disabled,
       styles,
+      style,
     } = this.props;
     const { offset } = this.state;
 
@@ -207,7 +205,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
     ] as ViewStyle;
 
     const sliderLine = [
-      styles!.zaSliderLine,
+      styles!.zaSliderLine
     ] as ViewStyle;
 
     const sliderInnerLine = [
@@ -226,7 +224,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
             style={[sliderLine, { opacity: disabled ? 0.6 : 1 }]}
             onLayout={({ nativeEvent: e }) => this.getLayout(e)}
           >
-            <View style={[sliderInnerLine, { width: offset }]} />
+            <View style={[sliderInnerLine, { width: offset, backgroundColor: style && style.backgroundColor || '#12c287' }]} />
           </View>
           <View
             disabled={disabled}

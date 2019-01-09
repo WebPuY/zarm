@@ -31,6 +31,10 @@ export default class SliderPage extends PureComponent {
   }
 
   render() {
+    const style = {
+      backgroundColor: 'red',
+    };
+
     return (
       <ScrollView>
         <Panel title="基本用法">
@@ -50,7 +54,7 @@ export default class SliderPage extends PureComponent {
         </Panel>
         <Panel title="设置步长">
           <View style={[styles.box]}>
-            <Slider onChange={this.onChange} step={10} />
+            <Slider onChange={this.onChange} style={style} step={10} />
           </View>
         </Panel>
         <Panel title="禁用状态">

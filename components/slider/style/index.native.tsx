@@ -50,7 +50,6 @@ export default {
   zaSliderInnerLine: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#12c287',
   },
   zaSliderHandle: {
     width: 28,
