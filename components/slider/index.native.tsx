@@ -130,7 +130,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
     this.init();
   }
 
-  handlePanResponderStart = (e, gestureState) => {
+  handlePanResponderStart = () => {
     const { disabled } = this.props;
     if (disabled) {
       return;
@@ -164,13 +164,14 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
       });
       return;
     }
-
-    const value = this.getValueByOffset(offset);
-    offset = this.getOffsetByValue(value);
-    this.setState({
-      offset: offset,
-      value,
-    });
+    if (Math.abs(gestureState.vx) < 1) {
+      const value = this.getValueByOffset(offset);
+      offset = this.getOffsetByValue(value);
+      this.setState({
+        offset: offset,
+        value,
+      });
+    }
   }
 
   onPanResponderEnd = () => {
@@ -195,7 +196,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
       style,
     } = this.props;
     const { offset } = this.state;
-
+    console.log(1111, 'render');
     const sliderWrapper = [
       styles!.container,
     ] as ViewStyle;
@@ -205,7 +206,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
     ] as ViewStyle;
 
     const sliderLine = [
-      styles!.zaSliderLine
+      styles!.zaSliderLine,
     ] as ViewStyle;
 
     const sliderInnerLine = [
@@ -216,6 +217,8 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
       styles!.zaSliderHandle,
     ] as ViewStyle;
 
+    const lineColor = style && style.backgroundColor || '#12c287';
+
     return (
       <View style={sliderWrapper}>
         {this.locatedTooltip()}
@@ -224,7 +227,7 @@ export default class ZSlider extends PureComponent<SliderProps, any> {
             style={[sliderLine, { opacity: disabled ? 0.6 : 1 }]}
             onLayout={({ nativeEvent: e }) => this.getLayout(e)}
           >
-            <View style={[sliderInnerLine, { width: offset, backgroundColor: style && style.backgroundColor || '#12c287' }]} />
+            <View style={[sliderInnerLine, { width: offset, backgroundColor: lineColor }]} />
           </View>
           <View
             disabled={disabled}
